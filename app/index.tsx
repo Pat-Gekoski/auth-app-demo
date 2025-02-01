@@ -1,10 +1,11 @@
-import { ActivityIndicator, Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { COLORS } from '@/utils/colors'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Link, useRouter } from 'expo-router'
+import { useAuth } from '@/context/AuthContext'
 
 const schema = z.object({
 	email: z.string().email('Invalid email address'),
@@ -16,6 +17,7 @@ type FormData = z.infer<typeof schema>
 const Page = () => {
 	const [loading, setLoading] = useState(false)
 	const router = useRouter()
+	const { onLogin } = useAuth()
 
 	const {
 		control,
@@ -31,8 +33,14 @@ const Page = () => {
 		mode: 'onChange',
 	})
 
-	const onSubmit = (data: any) => {
+	const onSubmit = async (data: any) => {
 		setLoading(true)
+		const result = await onLogin!(data.email, data.password)
+		if (result && result.error) {
+			Alert.alert('Error', result.msg)
+		}
+
+		setLoading(false)
 	}
 
 	return (

@@ -1,10 +1,11 @@
-import { ActivityIndicator, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, set, useForm } from 'react-hook-form'
 import { COLORS } from '@/utils/colors'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useRouter } from 'expo-router'
+import { useAuth } from '@/context/AuthContext'
 
 const schema = z.object({
 	name: z.string().optional(),
@@ -17,6 +18,7 @@ type FormData = z.infer<typeof schema>
 const Page = () => {
 	const [loading, setLoading] = useState(false)
 	const router = useRouter()
+	const { onRegister } = useAuth()
 
 	const {
 		control,
@@ -32,8 +34,15 @@ const Page = () => {
 		mode: 'onChange',
 	})
 
-	const onSubmit = (data: any) => {
+	const onSubmit = async (data: any) => {
 		setLoading(true)
+		const result = await onRegister!(data.email, data.password, data.name)
+		if (result && result.error) {
+			Alert.alert('Error', result.msg)
+		} else {
+			router.back()
+		}
+		setLoading(false)
 	}
 
 	return (
