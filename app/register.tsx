@@ -1,14 +1,15 @@
-import { ActivityIndicator, Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { COLORS } from '@/utils/colors'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { Link, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 
 const schema = z.object({
+	name: z.string().optional(),
 	email: z.string().email('Invalid email address'),
-	password: z.string().min(1, 'Password is required'),
+	password: z.string().min(6, 'Password must be at least 6 characters').max(32, 'Password must be at most 32 characters'),
 })
 
 type FormData = z.infer<typeof schema>
@@ -38,9 +39,23 @@ const Page = () => {
 	return (
 		<View style={styles.contianer}>
 			<KeyboardAvoidingView behavior='padding' style={{ flex: 1, justifyContent: 'center' }}>
-				<Image source={{ uri: 'https://galaxies.dev/img/logos/logo--blue.png' }} style={styles.logo} />
-				<Text style={styles.header}>Galaxies</Text>
-				<Text style={styles.subHeader}>Login and start your journey.</Text>
+				<Controller
+					control={control}
+					name='name'
+					render={({ field: { onChange, onBlur, value } }) => (
+						<View style={styles.inputContainer}>
+							<TextInput
+								style={styles.input}
+								onChangeText={onChange}
+								onBlur={onBlur}
+								value={value}
+								placeholder='Name (optional)'
+								placeholderTextColor={COLORS.placeholder}
+							/>
+						</View>
+					)}
+					rules={{ required: 'Email is required' }}
+				/>
 				<Controller
 					control={control}
 					name='email'
@@ -88,18 +103,8 @@ const Page = () => {
 					disabled={!!errors.email || !!errors.password}
 					onPress={handleSubmit(onSubmit)}
 				>
-					<Text style={styles.buttonText}>Sign In</Text>
+					<Text style={styles.buttonText}>Sign Up</Text>
 				</TouchableOpacity>
-				<Link href={'/register'} asChild>
-					<TouchableOpacity style={styles.registerButton}>
-						<Text style={styles.buttonText}>Register</Text>
-					</TouchableOpacity>
-				</Link>
-				<Link href={'/privacy'} asChild>
-					<TouchableOpacity style={{ alignItems: 'center', marginTop: 10 }}>
-						<Text style={styles.buttonText}>Privacy Policy</Text>
-					</TouchableOpacity>
-				</Link>
 			</KeyboardAvoidingView>
 			{loading && (
 				<View style={styles.overlay}>
@@ -119,23 +124,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		backgroundColor: COLORS.background,
 	},
-	logo: {
-		width: '100%',
-		height: 100,
-		resizeMode: 'contain',
-	},
-	header: {
-		fontSize: 40,
-		textAlign: 'center',
-		marginBottom: 10,
-		color: '#FFF',
-	},
-	subHeader: {
-		fontSize: 18,
-		textAlign: 'center',
-		marginBottom: 20,
-		color: '#FFF',
-	},
 	inputContainer: {
 		marginVertical: 8,
 	},
@@ -154,14 +142,6 @@ const styles = StyleSheet.create({
 		padding: 12,
 		borderRadius: 4,
 		alignItems: 'center',
-	},
-	registerButton: {
-		marginTop: 10,
-		padding: 12,
-		borderRadius: 4,
-		alignItems: 'center',
-		borderWidth: 1,
-		borderColor: COLORS.primary,
 	},
 	buttonText: {
 		color: '#FFF',
