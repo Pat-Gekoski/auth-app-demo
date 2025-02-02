@@ -34,7 +34,7 @@ export const loginUser = async (email: string, password: string): Promise<ApiRes
 		const response = await axios.post(`${API_URL}/users/login`, { email, password })
 		return { data: response.data.token }
 	} catch (error) {
-		return { error: 'Failed to login. Please try again.' }
+		throw new Error('Failed to login. Please try again.')
 	}
 }
 
@@ -43,7 +43,7 @@ export const getUserInfo = async (): Promise<ApiResponse<any>> => {
 		const response = await axios.get(`${API_URL}/users/me`)
 		return { data: response.data }
 	} catch (error) {
-		return { error: 'Failed to get user info. Please try again.' }
+		throw new Error('Failed to get user info. Please try again.')
 	}
 }
 
@@ -52,7 +52,7 @@ export const registerUser = async (email: string, password: string, name?: strin
 		const response = await axios.post(`${API_URL}/users/register`, { email, password, name })
 		return { data: response.data }
 	} catch (error) {
-		return { error: 'Failed to register. Please try again.' }
+		throw new Error('Failed to register. Please try again.')
 	}
 }
 
@@ -61,7 +61,7 @@ export const fetchMessages = async (): Promise<ApiResponse<Message[]>> => {
 		const response = await axios.get(`${API_URL}/messages`)
 		return { data: response.data }
 	} catch (error) {
-		return { error: 'Failed to fetch messages. Please try again.' }
+		throw new Error('Failed to fetch messages. Please try again.')
 	}
 }
 
@@ -70,7 +70,7 @@ export const fetchMessage = async (id: number): Promise<ApiResponse<Message>> =>
 		const response = await axios.get(`${API_URL}/messages/${id}`)
 		return { data: response.data }
 	} catch (error) {
-		return { error: 'Failed to fetch message. Please try again.' }
+		throw new Error('Failed to fetch message. Please try again.')
 	}
 }
 
@@ -79,7 +79,7 @@ export const createMessage = async (payload: CreateMessagePayload): Promise<ApiR
 		const response = await axios.post(`${API_URL}/messages`, payload)
 		return { data: response.data }
 	} catch (error) {
-		return { error: 'Failed to create message. Please try again.' }
+		throw new Error('Failed to create message. Please try again.')
 	}
 }
 
@@ -97,7 +97,7 @@ export const deleteMessage = async (id: number): Promise<ApiResponse<void>> => {
 		await axios.delete(`${API_URL}/messages/${id}`)
 		return {}
 	} catch (error) {
-		return { error: 'Failed to delete message. Please try again.' }
+		throw new Error('Failed to delete message. Please try again.')
 	}
 }
 

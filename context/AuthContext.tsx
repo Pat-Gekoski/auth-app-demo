@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import * as SecureStore from 'expo-secure-store'
 import { loginUser, registerUser } from '@/utils/api'
+import axios from 'axios'
 
 const JWT_KEY = 'jwt-key'
 
@@ -42,6 +43,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			const decodedToken = jwtDecode<DecodedToken>(token)
 			setUserId(decodedToken.id)
 			setToken(token)
+			axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
 		} catch (error) {
 			console.error('Error processing token', error)
 			handleLogout()
@@ -72,6 +74,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		await SecureStore.deleteItemAsync(JWT_KEY)
 		setToken(null)
 		setUserId(null)
+		axios.defaults.headers.common['Authorization'] = ''
 	}
 
 	const value = {
