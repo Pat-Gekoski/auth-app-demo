@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native'
 import React from 'react'
 import { Message } from '@/utils/api'
 import { Link } from 'expo-router'
@@ -9,6 +9,8 @@ interface MessageItemProps {
 }
 
 const MessageItem = ({ message }: MessageItemProps) => {
+	const colorScheme = useColorScheme()
+
 	return (
 		<Link href={`/(app)/(authenticated)/(tabs)/messages/${message.id}`} style={[styles.container]} asChild>
 			<TouchableOpacity activeOpacity={0.7}>
