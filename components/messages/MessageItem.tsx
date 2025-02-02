@@ -10,6 +10,7 @@ interface MessageItemProps {
 
 const MessageItem = ({ message }: MessageItemProps) => {
 	const colorScheme = useColorScheme()
+	// todo: add custom styles based on colorScheme
 
 	return (
 		<Link href={`/(app)/(authenticated)/(tabs)/messages/${message.id}`} style={[styles.container]} asChild>
